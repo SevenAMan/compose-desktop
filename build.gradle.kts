@@ -9,8 +9,6 @@ group = "org.qldmj"
 version = "1.0-SNAPSHOT"
 
 repositories {
- /*   google()
-    mavenCentral()*/
     maven("https://maven.aliyun.com/repository/gradle-plugin")
     maven("https://maven.aliyun.com/repository/google")
     maven("https://maven.aliyun.com/repository/public")
@@ -27,14 +25,31 @@ kotlin {
         val jvmMain by getting {
             dependencies {
                 implementation(compose.desktop.currentOs)
+                implementation("com.squareup.retrofit2:retrofit:2.6.0")
+                implementation("com.squareup.retrofit2:converter-gson:2.6.0")
             }
         }
         val jvmTest by getting
     }
 }
 
+task("copyWix311", Copy::class) {
+    from("wix311.zip")
+    into("build/wixToolset")
+}
+
+afterEvaluate {
+    tasks.getByName("packageMsi").dependsOn("copyWix311")
+    tasks.getByName("downloadWix").enabled = false
+
+    if (file("build/wixToolset/unpacked").exists()) {
+        tasks.getByName("unzipWix").enabled = false
+    }
+}
+
 compose.desktop {
     application {
+        javaHome = "C:/Program Files/Java/jdk-17"
         mainClass = "MainKt"
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
