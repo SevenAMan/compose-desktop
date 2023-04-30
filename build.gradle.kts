@@ -18,7 +18,7 @@ repositories {
 
 kotlin {
     jvm {
-        jvmToolchain(11)
+        jvmToolchain(17)
         withJava()
     }
     sourceSets {
@@ -55,6 +55,16 @@ compose.desktop {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "compose-desktop"
             packageVersion = "1.0.0"
+
+//            windows {
+//                iconFile.set(project.file("icon.ico"))
+//            }
+            outputBaseDir.set(project.buildDir.resolve("customOutputDir"))
         }
+//        打包为可执行的jar
+//        disableDefaultConfiguration()
+//        fromFiles(project.fileTree("libs/") { include("**/*.jar") })
+//        mainJar.set(project.file("main.jar"))
+//        dependsOn("mainJarTask")
     }
 }
