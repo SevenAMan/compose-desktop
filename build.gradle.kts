@@ -25,6 +25,13 @@ dependencies {
 
 tasks.withType<KotlinCompile> {
     kotlinOptions.jvmTarget = "17"
+    sourceSets {
+        main {
+            java.srcDir("src/main/kotlin")
+            kotlin.srcDir("src/main/kotlin")
+            resources.setSrcDirs(listOf("src/main/resources"))
+        }
+    }
 
 }
 
