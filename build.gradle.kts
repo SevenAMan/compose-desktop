@@ -1,7 +1,8 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("multiplatform")
+    kotlin("jvm")
     id("org.jetbrains.compose")
 }
 
@@ -16,21 +17,15 @@ repositories {
     maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
 }
 
-kotlin {
-    jvm {
-        jvmToolchain(17)
-        withJava()
-    }
-    sourceSets {
-        val jvmMain by getting {
-            dependencies {
-                implementation(compose.desktop.currentOs)
-                implementation("com.squareup.retrofit2:retrofit:2.6.0")
-                implementation("com.squareup.retrofit2:converter-gson:2.6.0")
-            }
-        }
-        val jvmTest by getting
-    }
+dependencies {
+    implementation(compose.desktop.currentOs)
+    implementation("com.squareup.retrofit2:retrofit:2.6.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.6.0")
+}
+
+tasks.withType<KotlinCompile> {
+    kotlinOptions.jvmTarget = "17"
+
 }
 
 task("copyWix311", Copy::class) {
