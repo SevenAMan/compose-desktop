@@ -13,7 +13,7 @@ fun main() = singleWindowApplication {
     //     矢量图：(SVG, XML vector drawable)
 
     Image(
-        painter = painterResource("image/wallpaper.png"),
+        painter = painterResource("image/idea-log.svg"),
         modifier = Modifier.fillMaxSize(),
         contentDescription = "壁纸"
     )

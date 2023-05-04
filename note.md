@@ -15,3 +15,10 @@
 #### rememberSavable
 
 ```rememberSavable``` 可以在重组后保持状态,也可以在重新创建 activity 和进程后保持状态。
+
+#### useResource
+
+```userResource```
+Open InputStream from a resource stored in resources for the application, calls the block callback giving it a
+InputStream and closes stream once the processing is complete.
+从磁盘打开读取InputStream, 调用回调，提供inputStream，并在处理完后关闭流

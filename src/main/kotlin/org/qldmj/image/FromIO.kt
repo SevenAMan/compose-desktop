@@ -18,13 +18,13 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.loadImageBitmap
 import androidx.compose.ui.res.loadSvgPainter
 import androidx.compose.ui.res.loadXmlImageVector
+import androidx.compose.ui.res.useResource
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.singleWindowApplication
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.xml.sax.InputSource
-import java.io.File
 import java.io.IOException
 import java.io.InputStream
 import java.net.URL
@@ -33,27 +33,34 @@ fun main() = singleWindowApplication {
     val density = LocalDensity.current// 本机像素
     Column {
         asyncImage(
-            load = { loadImageBitmap(getInputStream("image/wallpaper.png")) },
+            load = { useResource("image/wallpaper.png") { it.buffered().use(::loadImageBitmap) } },
             painterFor = { remember { BitmapPainter(it) } },
             contentDescription = "wallpaper",
             modifier = Modifier.width(200.dp)
         )
 
         asyncImage(
-            load = { loadSvgPainter(getInputStream("idea-log.svg"), density) },
+            load = { loadBySvgPainter(getInputStream("image/idea-log.svg"), density) },
             painterFor = { remember { it } },
             contentDescription = "idea log",
             contentScale = ContentScale.FillWidth,
-            modifier = Modifier.width(200.dp)
+//            modifier = Modifier.width(200.dp)
         )
 
         asyncImage(
-            load = { loadXmlImageVector(getInputStream("compose-log.xml"), density) },
+            load = { loadByXmlImageVector(getInputStream("image/compose-log.xml"), density) },
             painterFor = { rememberVectorPainter(it) },
             contentDescription = "compose log",
             contentScale = ContentScale.FillWidth,
-            modifier = Modifier.width(200.dp)
+//            modifier = Modifier.width(200.dp)
         )
+
+//        val url =""
+//        asyncImage(
+//            load = { loadByImageBitmap(url) },
+//            painterFor = { remember { BitmapPainter(it) } },
+//            contentDescription = "网图"
+//        )
     }
 
 }
@@ -93,7 +100,7 @@ private fun <T> asyncImage(
 
 }
 
-private fun getInputStream(resourcePath : String) : InputStream{
+private fun getInputStream(resourcePath: String): InputStream {
     return ClassLoader.getSystemClassLoader().getResource(resourcePath)?.openStream()!!
 }
 
@@ -102,33 +109,33 @@ private fun getInputStream(resourcePath : String) : InputStream{
 /**
  * 加载位图
  */
-private fun loadImageBitmap(inputStream: InputStream): ImageBitmap =
+private fun loadByImageBitmap(inputStream: InputStream): ImageBitmap =
     inputStream.buffered().use(::loadImageBitmap)
 
 /**
- * @param file      svg
+ * @param inputStream      svg
  * @param density   屏幕的密度。用于像素之间的转换
  */
-private fun loadSvgPainter(inputStream: InputStream, density: Density): Painter =
+private fun loadBySvgPainter(inputStream: InputStream, density: Density): Painter =
     inputStream.buffered().use { loadSvgPainter(it, density) }
 
 
 /**
- * @param file      xml image
+ * @param inputStream      xml image
  * @param density   屏幕密度，像素之间的转换
  *
  * @return ImageVector矢量图
  */
-private fun loadXmlImageVector(inputStream: InputStream, density: Density): ImageVector =
+private fun loadByXmlImageVector(inputStream: InputStream, density: Density): ImageVector =
     inputStream.buffered().use { loadXmlImageVector(InputSource(it), density) }
 
 // 通过net IO 加载图象
-private fun loadImageBitmap(url: String): ImageBitmap =
+private fun loadByImageBitmap(url: String): ImageBitmap =
     URL(url).openStream().buffered().use(::loadImageBitmap)
 
-private fun loadSvgPainter(url: String, density: Density): Painter =
+private fun loadBySvgPainter(url: String, density: Density): Painter =
     URL(url).openStream().buffered().use { loadSvgPainter(it, density) }
 
-private fun loadXmlImageVector(url: String, density: Density): ImageVector =
+private fun loadByXmlImageVector(url: String, density: Density): ImageVector =
     URL(url).openStream().buffered().use { loadXmlImageVector(InputSource(it), density) }
 
