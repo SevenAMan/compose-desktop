@@ -2,6 +2,11 @@
 
 ### other: <a href = 'https://blog.csdn.net/bugyinyin/article/details/126852405'> 教程 </a>
 
+### Modifier: <a href = 'https://blog.csdn.net/lplj717/article/details/121925809?spm=1001.2014.3001.5502'>modifier 介绍</a>
+
+### Button： <a href = 'https://blog.csdn.net/lplj717/article/details/121857963'> Button的使用</a>
+
+
 ### <font face="仿宋" color=red size=4>mutableStateOf</font> :
 
 表明某个变量是有状态的，对变量进行监听，当状态改变时，触发重绘。
@@ -26,3 +31,11 @@ InputStream and closes stream once the processing is complete.
 ### <font face="仿宋" color=red size=4>点击事件</font>
 
 `Modifier.combinedClickable()`：仅适用于鼠标的左键（主键）
+
+1. `onClick`：只会响应鼠标点击事件，无法响应 `Enter`（回车）键的点击
+   `Modifier.indication` 和 `Modifier.semantics ` 用于响应`Enter`
+2. **`clickable`**：可以响应 `Enter` 触发点击事件
+
+### <font face="仿宋" color=red size=4>AnimatedContent</font>
+
+`AnimatedContent` 添加动画，监视 `targetState`中的对象，当变化时添加动画效果

@@ -1,5 +1,7 @@
 package org.qldmj.mouseevent
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Text
@@ -18,7 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.singleWindowApplication
 
-@OptIn(ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalComposeUiApi::class, ExperimentalAnimationApi::class)
 fun main() = singleWindowApplication {
 
     var color by remember { mutableStateOf(Color(0, 0, 0)) }
@@ -61,19 +63,23 @@ fun main() = singleWindowApplication {
         ) {
             repeat(10) { index ->
                 var active by remember { mutableStateOf(false) }
-                Text(
-                    text = "Item $index",
-                    fontSize = 30.sp,
-                    fontStyle = if (active) FontStyle.Italic else FontStyle.Normal,
-                    modifier = Modifier.fillMaxWidth()
-                        .background(if (active) Color.Green else Color.White)
-                        .onPointerEvent(PointerEventType.Enter) { active = true }
-                        .onPointerEvent(PointerEventType.Exit) { active = false }
-                        .onPointerEvent(PointerEventType.Press) {
-                            val source = it.awtEventOrNull?.source
-                            text = source.toString()
-                        }
-                )
+
+                AnimatedContent(targetState = active) {
+                    Text(
+                        text = "Item $index",
+                        fontSize = 30.sp,
+                        fontStyle = if (active) FontStyle.Italic else FontStyle.Normal,
+                        modifier = Modifier.fillMaxWidth()
+                            .background(if (active) Color.Green else Color.White)
+                            .onPointerEvent(PointerEventType.Enter) { active = true }
+                            .onPointerEvent(PointerEventType.Exit) { active = false }
+                            .onPointerEvent(PointerEventType.Press) {
+                                val source = it.awtEventOrNull?.source
+                                text = source.toString()
+                            }
+                    )
+                }
+
             }
         }
     }
