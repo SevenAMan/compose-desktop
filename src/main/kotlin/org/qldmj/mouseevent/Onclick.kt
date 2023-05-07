@@ -3,6 +3,8 @@ package org.qldmj.mouseevent
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.*
+import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.onDrag
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
@@ -30,6 +32,7 @@ fun main() = singleWindowApplication {
     var text by remember { mutableStateOf("") }
 
     Column {
+        val windowInfo = LocalWindowInfo.current
         Box {
             AnimatedContent(targetState = text, modifier = Modifier.align(Alignment.Center)) {
                 Text(
@@ -45,6 +48,11 @@ fun main() = singleWindowApplication {
             }
             .onClick(keyboardModifiers = { isShiftPressed }) {
                 text = "点击并按下了 shift "
+            }
+            .onClick {
+                if (windowInfo.keyboardModifiers.isCtrlPressed) {
+                    text = "点击并按下了 Ctrl "
+                }
             }
         ) {
             AnimatedContent(targetState = text, modifier = Modifier.align(Alignment.Center)) {
@@ -85,7 +93,6 @@ fun main() = singleWindowApplication {
         }
 
 
-        val windowInfo = LocalWindowInfo.current
         var topBoxOffset by remember { mutableStateOf(Offset(0f, 0f)) }
 
         Box(modifier = Modifier
@@ -108,7 +115,7 @@ fun main() = singleWindowApplication {
             .background(Color.LightGray)
             .onDrag(
                 enabled = true,
-                matcher = PointerMatcher.mouse(PointerButton.Secondary), // right mouse button
+                matcher = PointerMatcher.mouse(PointerButton.Primary), // right mouse button
                 onDragStart = {
                     println("Gray Box: drag start")
                 },
@@ -122,6 +129,35 @@ fun main() = singleWindowApplication {
         ) {
             Text(text = "右键拖拽,\n可以按下ctrl", modifier = Modifier.align(Alignment.Center))
         }
+
+        var otherBoxOffset by remember { mutableStateOf(Offset(0f, 0f)) }
+        Box(modifier = Modifier.offset { IntOffset(otherBoxOffset.x.toInt(), otherBoxOffset.y.toInt()) }
+            .size(100.dp).background(Color.Cyan)
+            .pointerInput(Unit) {
+                detectDragGestures { change, _ ->
+                    otherBoxOffset += change.positionChange()
+                }
+            }) {
+            Text("下", textAlign = TextAlign.Center, modifier = Modifier.align(Alignment.Center))
+        }
+
+        var topBoxOffset2 by remember { mutableStateOf(Offset(0f, 0f)) }
+
+        Box(modifier = Modifier.offset {
+            IntOffset(topBoxOffset2.x.toInt(), topBoxOffset2.y.toInt())
+        }.size(100.dp)
+            .background(Color.Green)
+            .pointerInput(Unit) {
+                detectDragGestures(
+                    matcher = PointerMatcher.Primary
+                ) {
+                    topBoxOffset2 += it
+                }
+            }
+        ) {
+            Text(text = "Drag with LMB", modifier = Modifier.align(Alignment.Center))
+        }
+
     }
 
 }

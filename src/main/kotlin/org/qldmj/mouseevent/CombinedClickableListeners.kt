@@ -3,12 +3,20 @@ package org.qldmj.mouseevent
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.gestures.awaitEachGesture
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.gestures.detectTransformGestures
+import androidx.compose.foundation.gestures.onDrag
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Text
+import androidx.compose.material.TextField
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.composed
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.onPointerEvent
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.loadSvgPainter
 import androidx.compose.ui.res.useResource
@@ -41,6 +49,8 @@ fun main() = application {
                     text = text, fontSize = 40.sp, textAlign = TextAlign.Center,
                     modifier = Modifier.fillMaxWidth(0.7f).fillMaxHeight(0.2f)
                 )
+                var textFiledText by remember { mutableStateOf("") }
+                TextField(textFiledText, onValueChange = { textFiledText = it })
             }
         }
     }
