@@ -40,8 +40,14 @@ InputStream and closes stream once the processing is complete.
 `AnimatedContent` 添加动画，监视 `targetState`中的对象，当变化时添加动画效果
 
 ### <font face="仿宋" color=red size=4> LocalWindowInfo.current </font>
+
 当前窗口的信息。可以监听到 键盘按键
 
 ### <font face="仿宋" color=red size=4>拖拽事件</font>
-1. **Modifier.onDrag**  `matcher`可以匹配到  PointerMatcher.mouse(PointerButton.Secondary) 鼠标按键
+
+1. **Modifier.onDrag**  `matcher`可以匹配到 PointerMatcher.mouse(PointerButton.Secondary) 鼠标按键
 2. **Modifier.pointerInput** Modifier.pointerInput(Unit) { detectDragGestures( matcher = PointerMatcher.Primary) }
+
+### <font face="仿宋" color=red size=4>SelectionContainer</font>
+
+文本选择域
