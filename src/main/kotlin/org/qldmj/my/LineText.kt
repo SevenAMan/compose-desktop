@@ -114,15 +114,14 @@ object Fonts {
 
 fun main() = singleWindowApplication {
 
-    Column (Modifier.fillMaxSize()) {
+    SelectionContainer {
+        Column (Modifier.fillMaxSize()) {
 
-        repeat(15) { index ->
-            Box {
-                SelectionContainer {
+            repeat(15) { index ->
+                Box {
                     line(Modifier.align(Alignment.CenterStart), index.toString(), "Line text $index")
                 }
             }
         }
     }
-
 }
