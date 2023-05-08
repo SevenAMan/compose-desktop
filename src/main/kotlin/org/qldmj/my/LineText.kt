@@ -5,11 +5,16 @@ import androidx.compose.foundation.text.selection.DisableSelection
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.LocalContentColor
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.input.pointer.PointerEventType
+import androidx.compose.ui.input.pointer.isCtrlPressed
+import androidx.compose.ui.input.pointer.onPointerEvent
 import androidx.compose.ui.layout.layout
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
@@ -20,21 +25,25 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.singleWindowApplication
 
 @Composable
-fun line(modifier: Modifier, number: String, lineText: String) {
+fun line(modifier: Modifier, number: String, lineText: String, textSize: TextUnit = 23.sp) {
     Row(modifier = modifier) {
         DisableSelection {  //禁用其中的文本框或文本域
             Box {
-                lineNumber("100", Modifier.alpha(0f))
-                lineNumber(number, Modifier.align(Alignment.CenterEnd))
+                lineNumber("100", Modifier.alpha(0f), textSize)
+                lineNumber(number, Modifier.align(Alignment.CenterEnd), textSize)
             }
         }
 
-        lineContent(Modifier
-            .weight(1f)
-            .withoutWidthConstraints()
-            .padding(start = 28.dp, end = 12.dp), lineText)
+        lineContent(
+            Modifier
+                .weight(1f)
+                .withoutWidthConstraints()
+                .padding(start = 28.dp, end = 12.dp), lineText,
+            textSize
+        )
     }
 }
+
 @Composable
 private fun lineNumber(number: String, modifier: Modifier, fontSize: TextUnit = 23.sp) = Text(
     text = number,
@@ -43,6 +52,7 @@ private fun lineNumber(number: String, modifier: Modifier, fontSize: TextUnit = 
     color = LocalContentColor.current.copy(alpha = 0.30f),
     modifier = modifier.padding(start = 12.dp)
 )
+
 @Composable
 private fun lineContent(modifier: Modifier, text: String, fontSize: TextUnit = 23.sp) = Text(
     text = text,
@@ -112,14 +122,20 @@ object Fonts {
     )
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 fun main() = singleWindowApplication {
+    var textSize by remember { mutableStateOf(20.sp) }
 
+    val current = LocalWindowInfo.current
     SelectionContainer {
-        Column (Modifier.fillMaxSize()) {
-
+        Column(Modifier.fillMaxSize()) {
             repeat(15) { index ->
-                Box {
-                    line(Modifier.align(Alignment.CenterStart), index.toString(), "Line text $index")
+                Box(modifier = Modifier.onPointerEvent(eventType = PointerEventType.Scroll) {
+                    if (current.keyboardModifiers.isCtrlPressed) {
+                        textSize.div(it.changes.first().scrollDelta.y)
+                    }
+                }) {
+                    line(Modifier.align(Alignment.CenterStart), index.toString(), "Line text $index", textSize)
                 }
             }
         }
