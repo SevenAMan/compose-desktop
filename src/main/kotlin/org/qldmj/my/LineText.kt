@@ -1,5 +1,6 @@
 package org.qldmj.my
 
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.selection.DisableSelection
 import androidx.compose.foundation.text.selection.SelectionContainer
@@ -21,8 +22,10 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.lerp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.singleWindowApplication
+import java.io.File
 
 @Composable
 fun line(modifier: Modifier, number: String, lineText: String, textSize: TextUnit = 23.sp) {
@@ -63,7 +66,7 @@ private fun lineContent(modifier: Modifier, text: String, fontSize: TextUnit = 2
     softWrap = false
 )
 
-fun Modifier.withoutWidthConstraints() = layout { measurable, constraints ->
+private fun Modifier.withoutWidthConstraints() = layout { measurable, constraints ->
     val placeable = measurable.measure(constraints.copy(maxWidth = Int.MAX_VALUE))
     layout(constraints.maxWidth, placeable.height) {
         placeable.place(0, 0)
@@ -124,20 +127,45 @@ object Fonts {
 
 @OptIn(ExperimentalComposeUiApi::class)
 fun main() = singleWindowApplication {
-    var textSize by remember { mutableStateOf(20.sp) }
 
+    var textSize by remember { mutableStateOf(20.sp) }
+    var ratio = 0.50f
     val current = LocalWindowInfo.current
-    SelectionContainer {
-        Column(Modifier.fillMaxSize()) {
-            repeat(15) { index ->
-                Box(modifier = Modifier.onPointerEvent(eventType = PointerEventType.Scroll) {
+
+    val stateVertical = rememberScrollState(0)
+    val stateHorizontal = rememberScrollState(0)
+
+    Box(modifier = Modifier.fillMaxSize()) {
+        Box(
+            Modifier.fillMaxSize().verticalScroll(stateVertical).horizontalScroll(stateHorizontal).padding(10.dp)
+                .onPointerEvent(eventType = PointerEventType.Scroll) {
                     if (current.keyboardModifiers.isCtrlPressed) {
-                        textSize.div(it.changes.first().scrollDelta.y)
+                        ratio -= it.changes.first().scrollDelta.y * 0.05f
+                        ratio = if (ratio >= 1.0) 0.95f else ratio
+                        ratio = if (ratio < 0.0) 0.0f else ratio
+                        textSize = lerp(6.sp, 40.sp, ratio)
                     }
                 }) {
-                    line(Modifier.align(Alignment.CenterStart), index.toString(), "Line text $index", textSize)
+            SelectionContainer {
+                Column(Modifier.fillMaxSize()) {
+                    val lines = File("note.md").readLines()
+                    repeat(lines.size) {
+                        Box(modifier = Modifier.fillMaxWidth()) {
+                            line(Modifier.align(Alignment.CenterStart), "${it + 1}", lines[it], textSize)
+                        }
+                    }
                 }
             }
+
         }
+        VerticalScrollbar(
+            modifier = Modifier.align(Alignment.CenterEnd).fillMaxHeight(),
+            adapter = rememberScrollbarAdapter(stateVertical)
+        )
+        HorizontalScrollbar(
+            modifier = Modifier.align(Alignment.BottomStart).fillMaxWidth().padding(end = 12.dp),
+            adapter = rememberScrollbarAdapter(stateHorizontal)
+        )
     }
+
 }
