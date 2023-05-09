@@ -2,6 +2,7 @@ package org.qldmj.my
 
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.selection.DisableSelection
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.LocalContentColor
@@ -11,6 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.isCtrlPressed
 import androidx.compose.ui.input.pointer.onPointerEvent
@@ -137,7 +139,7 @@ fun main() = singleWindowApplication {
 
     Box(modifier = Modifier.fillMaxSize()) {
         Box(
-            Modifier.fillMaxSize().verticalScroll(stateVertical).horizontalScroll(stateHorizontal).padding(10.dp)
+            Modifier.fillMaxSize().padding(10.dp)
                 .onPointerEvent(eventType = PointerEventType.Scroll) {
                     if (current.keyboardModifiers.isCtrlPressed) {
                         ratio -= it.changes.first().scrollDelta.y * 0.05f
@@ -147,7 +149,7 @@ fun main() = singleWindowApplication {
                     }
                 }) {
             SelectionContainer {
-                Column(Modifier.fillMaxSize()) {
+                Column(Modifier.fillMaxSize().verticalScroll(stateVertical).horizontalScroll(stateHorizontal)) {
                     val lines = File("note.md").readLines()
                     repeat(lines.size) {
                         Box(modifier = Modifier.fillMaxWidth()) {
@@ -156,14 +158,15 @@ fun main() = singleWindowApplication {
                     }
                 }
             }
-
         }
         VerticalScrollbar(
             modifier = Modifier.align(Alignment.CenterEnd).fillMaxHeight(),
             adapter = rememberScrollbarAdapter(stateVertical)
         )
         HorizontalScrollbar(
-            modifier = Modifier.align(Alignment.BottomStart).fillMaxWidth().padding(end = 12.dp),
+            modifier = Modifier.align(Alignment.BottomStart)
+                .fillMaxWidth().padding(end = 12.dp, start = 20.dp)
+                .background(Color.Green),
             adapter = rememberScrollbarAdapter(stateHorizontal)
         )
     }

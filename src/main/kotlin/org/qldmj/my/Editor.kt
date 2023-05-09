@@ -27,19 +27,19 @@ fun main() = singleWindowApplication {
         Box(Modifier.fillMaxSize().verticalScroll(v)) {
             val lines = File("note.md").readLines()
             Row(Modifier.align(Alignment.CenterStart)) {
-                numColumn(20.sp, lines.size)
+                Box {
+                    numColumn(20.sp, lines.size)
+                }
                 Box(Modifier.horizontalScroll(h).fillMaxWidth()) {
                     contentColumn(20.sp, lines)
                 }
             }
         }
-
         VerticalScrollbar(rememberScrollbarAdapter(v), Modifier.align(Alignment.CenterEnd).fillMaxHeight())
         HorizontalScrollbar(
             rememberScrollbarAdapter(h),
             Modifier.align(Alignment.BottomStart).fillMaxWidth().padding(end = 12.dp).background(Color.Red)
         )
-
     }
 }
 
@@ -63,7 +63,7 @@ private fun contentColumn(textSize: TextUnit, lineText: List<String>) {
         Column {
             repeat(lineText.size) {
                 Box {
-                    lineContent(modifier = Modifier/*.withoutWidthConstraints()*/, lineText[it], textSize)
+                    lineContent(modifier = Modifier.withoutWidthConstraints(), lineText[it], textSize)
                 }
             }
         }
